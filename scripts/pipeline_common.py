@@ -21,6 +21,9 @@ RESULTS = ROOT / "results"
 REDUCED = DATA / "reduced"
 CLUSTERING = DATA / "clustering"
 TOPICS = DATA / "topics"
+AUTHORS = DATA / "authors"
+PREDICTIONS = DATA / "predictions"
+MODELS = ROOT / "models"
 
 EMBEDDINGS_PATH = DATA / "embeddings.npy"
 PAPER_IDS_PATH = DATA / "paper_ids.json"
@@ -76,7 +79,7 @@ ALL_VARIANTS = HDBSCAN_VARIANTS + FCM_VARIANTS + GMM_VARIANTS
 
 
 def ensure_dirs() -> None:
-    for path in (DATA, RESULTS, REDUCED, CLUSTERING, TOPICS):
+    for path in (DATA, RESULTS, REDUCED, CLUSTERING, TOPICS, AUTHORS, PREDICTIONS, MODELS):
         path.mkdir(parents=True, exist_ok=True)
 
 
