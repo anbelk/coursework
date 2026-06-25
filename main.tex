@@ -27,6 +27,7 @@
 % --- Графика, таблицы, формулы ---
 \usepackage{graphicx}
 \graphicspath{{figures/}}
+\usepackage{pdfpages}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,positioning,shapes.geometric,fit,backgrounds}
 \usepackage{placeins}
@@ -79,7 +80,11 @@
 \begin{document}
 
 % Титульный лист (не нумеруется)
-\input{sections/title}
+\IfFileExists{build/title_page.pdf}{%
+  \includepdf[pages=1,pagecommand={\thispagestyle{empty}}]{build/title_page.pdf}%
+}{%
+  \input{sections/title}%
+}
 
 % Аннотации RU/EN (не нумеруются)
 \input{sections/annotation}
@@ -99,7 +104,7 @@
 \input{sections/chapter3}
 
 % Заключение
-% \input{sections/conclusion}
+\input{sections/conclusion}
 
 % Библиографический список
 \newpage

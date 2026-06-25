@@ -1,51 +1,63 @@
 \begin{titlepage}
 \thispagestyle{empty}
 \begin{singlespace}
+\newcommand{\titlepagefont}{\fontsize{13pt}{15.6pt}\selectfont}
+\newcommand{\titlepagesmall}{\fontsize{11pt}{13.2pt}\selectfont}
+\newcommand{\studentsignature}{%
+  \IfFileExists{figures/student_signature.png}{%
+    \raisebox{-0.25cm}{\includegraphics[height=0.85cm]{figures/student_signature.png}}%
+  }{}%
+}
+\newcommand{\topicline}[3]{%
+  \noindent\begin{minipage}[t]{\textwidth}
+  {\titlepagefont #2\hspace{0.25cm}{\fontsize{12pt}{14.4pt}\selectfont #3}\par}
+  \vspace{-0.16cm}
+  \hspace*{#1}\rule{\dimexpr\textwidth-#1\relax}{0.4pt}
+  \end{minipage}%
+}
 \centering
 
-{\normalsize
-ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ АВТОНОМНОЕ ОБРАЗОВАТЕЛЬНОЕ УЧРЕЖДЕНИЕ\\
-ВЫСШЕГО ОБРАЗОВАНИЯ\\
-«НАЦИОНАЛЬНЫЙ ИССЛЕДОВАТЕЛЬСКИЙ УНИВЕРСИТЕТ\\
-«ВЫСШАЯ ШКОЛА ЭКОНОМИКИ»\par}
+{\titlepagefont
+Федеральное государственное автономное образовательное учреждение\\
+высшего образования «Национальный исследовательский университет\\
+«Высшая школа экономики»\par}
+
+\vspace{0.9cm}
+{\titlepagefont Факультет компьютерных наук\par}
+
+\vspace{0.2cm}
+{\titlepagefont Магистерская программа Машинное обучение в цифровом продукте\par}
+
+\vspace{1.9cm}
+{\titlepagefont КУРСОВАЯ РАБОТА\par}
 
 \vspace{1.0cm}
-{\normalsize Факультет компьютерных наук\par}
+\topicline{3.35cm}{На тему (рус)}{Система кластеризации научных статей}
 
-\vspace{0.15cm}
-\noindent\rule{\textwidth}{0.4pt}
-
-\vspace{1.3cm}
-{\normalsize Белкин Андрей Александрович\par}
-
-\vspace{1.6cm}
-{\large\bfseries
-СИСТЕМА КЛАСТЕРИЗАЦИИ НАУЧНЫХ СТАТЕЙ\par}
+\vspace{0.45cm}
+\topicline{3.85cm}{На тему (англ.)}{Scientific article clustering system}
 
 \vspace{1.4cm}
-{\normalsize Курсовая работа\par}
-\vspace{0.2cm}
-{\normalsize по направлению подготовки\\
-01.04.02 «Прикладная математика и информатика»\par}
-\vspace{0.15cm}
-{\normalsize образовательная программа\\ «Машинное обучение в цифровом продукте»\par}
-
-\vspace{1.6cm}
 
 \begin{flushright}
 \begin{minipage}{0.55\textwidth}
 \raggedright
-Руководитель\\
-старший преподаватель\\
-Департамента анализа данных\\
-и искусственного интеллекта\\[0.5cm]
-\rule{5cm}{0.4pt}\\
-А.\,А.~Паринов
+{\titlepagefont
+Студент\\[0.35cm]
+\makebox[7.6cm][l]{Белкин Андрей Александрович\hfill\studentsignature}\\[-0.28cm]
+\rule{7.6cm}{0.4pt}\\[-0.05cm]
+{\titlepagesmall\hspace*{1.65cm}(Ф.И.О., подпись)}\\[0.85cm]
+
+Руководитель КР\\[0.35cm]
+\makebox[7.6cm][l]{старший преподаватель А.\,А.~Паринов}\\[-0.05cm]
+\rule{7.6cm}{0.4pt}\\[-0.05cm]
+{\titlepagesmall (должность, звание, Ф.И.О, подпись)}
+}
 \end{minipage}
 \end{flushright}
 
 \vfill
-{\normalsize Москва, 2026\par}
+{\titlepagefont Москва, 2026\par}
 
 \end{singlespace}
 \end{titlepage}

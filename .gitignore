@@ -49,6 +49,7 @@ __pycache__/
 *.pyc
 models/
 requirments/
+figures/student_signature.png
 
 # LaTeX build artifacts
 build/
