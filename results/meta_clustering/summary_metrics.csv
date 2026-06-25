@@ -1,0 +1,3 @@
+variant,K,coherence_proxy,distinctness_proxy,coherence_weighted,coherence_unweighted,dup_pair_rate,n_pairs_checked,mean_entropy_norm,size_p25,size_p50,size_p75,top5_concentration,noise_ratio,metrics_are_real
+meta_hdbscan_medium,76,False,False,2.7084256387535075,2.75,0.0,131,0.3297143038616122,7.75,10.0,14.0,0.1453287197231834,0.11440245148110317,True
+meta_kmeans_umap10_k76,76,False,False,2.4170061411065107,2.4210526315789473,0.0,24,0.0,9.0,12.5,15.25,0.13074565883554648,0.0,True

@@ -1,0 +1,11 @@
+method_class,method,artifact,status,K,hit,mrr,ndcg,recall,n_examples,n_with_relevant
+Baseline,mean_author_embedding,mean_author_embedding,computed,10,0.0172326415777206,0.0059230159968137,0.0076099503785371,0.0148251391947269,1973.0,279.0
+Transformer,transformer_author_no_cluster,transformer_author_no_cluster,computed,10,0.0197668525088697,0.0070927762894311,0.0088436793806647,0.0172748775181284,1973.0,279.0
+Transformer,transformer_author_fine,author_retriever,computed_legacy_alias,10,0.0197668522596359,0.0073150224052369,0.0089238258078694,0.0167680364102125,1973.0,279.0
+Transformer,transformer_author_metacluster,transformer_author_metacluster,computed,10,0.0217942219969589,0.007414983225931,0.0094304624088272,0.0186264571718195,1973.0,279.0
+Transformer,transformer_author_fine_metacluster,transformer_author_fine_metacluster,computed,10,0.0177394830207805,0.0068542385698999,0.0081273168630037,0.0149940868440281,1973.0,279.0
+GraphSAGE,graphsage_author_no_cluster,graphsage_author,computed_legacy_alias,10,0.0182463247328996,0.0073713390156626,0.0086589911952614,0.0149940866976976,1973.0,279.0
+GraphSAGE,graphsage_author_fine,,not_run,10,,,,,,
+GraphSAGE,graphsage_author_metacluster,graphsage_author_metacluster,computed_legacy_alias,10,0.020273694768548,0.0072114416398108,0.0087378025054931,0.0169369839131832,1973.0,279.0
+GraphSAGE,graphsage_author_fine_metacluster,,not_run,10,,,,,,
+Semantic + Graph,graphsage_transformer_fine,graphsage_transformer_author,computed_legacy_alias,10,0.0223010648041963,0.0086420653387904,0.010217553935945,0.0185842216014862,1973.0,279.0

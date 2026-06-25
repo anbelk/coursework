@@ -1,0 +1,22 @@
+random_state: 42
+features:
+  umap_components: 10
+  pca_variance: 0.85
+variants:
+  hdbscan:
+    - name: hdbscan_fine
+      min_cluster_size: 10
+      min_samples: 5
+      cluster_selection_method: leaf
+    - name: hdbscan_medium
+      min_cluster_size: 30
+      min_samples: 5
+      cluster_selection_method: eom
+    - name: hdbscan_coarse
+      min_cluster_size: 100
+      min_samples: 5
+      cluster_selection_method: eom
+  fcm:
+    k: [50, 100, 200]
+  gmm:
+    k: [50, 100, 200]

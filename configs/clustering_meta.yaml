@@ -1,0 +1,24 @@
+random_state: 42
+features:
+  umap_components: 5
+  pca_variance: 0.85
+variants:
+  hdbscan:
+    - name: meta_hdbscan_fine
+      min_cluster_size: 3
+      min_samples: 2
+      cluster_selection_method: leaf
+    - name: meta_hdbscan_medium
+      min_cluster_size: 5
+      min_samples: 2
+      cluster_selection_method: eom
+    - name: meta_hdbscan_coarse
+      min_cluster_size: 10
+      min_samples: 3
+      cluster_selection_method: eom
+  fcm:
+    k: [10, 20, 40]
+  gmm:
+    k: [10, 20, 40]
+selection:
+  allow_proxy: true

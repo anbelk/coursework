@@ -3,18 +3,39 @@ name = "coursework"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
+    "fastapi>=0.136.3",
     "hdbscan>=0.8.43",
     "matplotlib>=3.10.9",
     "numpy>=2.4.6",
     "openai>=2.38.0",
     "pandas>=3.0.3",
+    "pydantic>=2.13.4",
     "python-dotenv>=1.2.2",
+    "pyyaml>=6.0.3",
     "requests>=2.34.2",
     "scikit-learn>=1.8.0",
     "sentence-transformers>=2.7.0",
     "tabulate>=0.10.0",
+    "topmost>=1.0.2",
     "torch>=2.2",
     "tqdm>=4.67.3",
     "transformers>=4.51.0",
     "umap-learn>=0.5.12",
+    "uvicorn[standard]>=0.48.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = [
+    "src/common",
+    "src/data",
+    "src/embeddings",
+    "src/clustering",
+    "src/recommendation",
+    "src/llm",
+    "src/evaluation",
+    "src/web",
 ]

@@ -1,0 +1,7 @@
+method_class,method,granularity,variant,status,K,llm_assigned_fit@10,llm_intruder_accuracy@10,assigned_fit_n_clusters,dup_pair_rate,embedding_coherence_lift,embedding_coherence_lift_weighted,assignment_confidence_mean,assignment_entropy_norm,noise_ratio,size_balance_entropy,size_p50,top5_concentration
+Baseline,kmeans_umap_baseline,fine,kmeans_umap_baseline_fine,computed,979.0,2.206666666666666,0.9333333333333333,30.0,0.26,0.038713530284983005,0.03891727348582204,1.0,0.0,0.0,0.9679165467235604,441.5,0.02098746287641305
+Baseline,kmeans_umap_baseline,medium,kmeans_umap_baseline_medium,computed,242.0,2.213333333333333,0.8666666666666667,30.0,0.03333333333333333,0.03200335591292578,0.032661375086261664,1.0,0.0,0.0,0.9592155515408988,1910.5,0.07678325713960432
+BERTopic Style,bertopic_style,fine,bertopic_style_fine,computed,979.0,2.453333333333333,0.9666666666666667,30.0,0.10666666666666667,0.05621242809344361,0.05389962567390543,0.7359464764595032,0.01926888769864342,0.6468032984785463,0.9479053611732022,112.0,0.03225609247783922
+BERTopic Style,bertopic_style,medium,bertopic_style_medium,computed,242.0,2.393333333333333,0.9,30.0,0.01,0.04390168657972793,0.03775294173767725,0.8242347240447998,0.031638148790954924,0.3577251411824979,0.8461097711784349,580.5,0.25342216653168503
+Neural Topic Model,fastopic_neural_topic_model,fine,fastopic_fine,not_run,,,,,,,,,,,,,
+Neural Topic Model,fastopic_neural_topic_model,medium,fastopic_medium,not_run,,,,,,,,,,,,,

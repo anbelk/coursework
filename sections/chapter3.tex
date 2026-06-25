@@ -1,0 +1,299 @@
+\newpage
+\section{Эксперименты}
+\label{ch:experiments}
+
+Все числа в этой главе взяты из реальных артефактов запусков (\code{data/}, \code{results/}).
+Экспериментальный контур — корпус подполя \textbf{Artificial Intelligence} в OpenAlex.
+
+\subsection{Датасет}
+\label{sec:dataset}
+
+Источник — OpenAlex, фильтр по подполю AI. Для retrieval отбираются \textbf{квалифицированные авторы}
+($\geq 10$ публикаций, $\geq 10$ статей в истории до cutoff 2024), затем сохраняются только их статьи.
+
+\begin{table}[ht]
+\caption{Характеристики датасета}
+\label{tab:dataset}
+\centering
+\footnotesize
+\begin{tabular}{lr}
+\toprule
+Характеристика & Значение \\
+\midrule
+Статей после фильтра & 509\,447 \\
+Квалифицированных авторов ($\geq 10$ статей) & 35\,954 \\
+Размерность эмбеддинга статьи & 768 (multilingual-e5-base) \\
+Префикс эмбеддера & \texttt{query:} + title + abstract \\
+UMAP для кластеризации & $n_{\mathrm{components}} = 10$ \\
+Soft membership автора $q$ & 980 (979 fine-кластеров + шум) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Разбиение для retrieval} — двухэтапное (см. \code{data/authors/dataset_meta.json}):
+
+\begin{enumerate}
+  \item \textbf{По авторам:} 80\,\% / 10\,\% / 10\,\% $\to$ train / val / test ($\mathrm{seed} = 42$).
+  \item \textbf{По годам внутри каждого автора:} история — публикации $\leq 2024$, таргет —
+        \textbf{новые квалифицированные coauthors} из статей $> 2024$ (не встречавшиеся в прошлой
+        истории).
+\end{enumerate}
+
+\begin{table}[ht]
+\caption{Разбиение примеров retrieval}
+\label{tab:splits}
+\centering
+\footnotesize
+\begin{tabular}{lrr}
+\toprule
+Split & Примеров & С $\geq 1$ релевантным coauthor \\
+\midrule
+train & 16\,210 & 7\,773 (для обучения) \\
+val   & 2\,021  & 280 \\
+test  & 1\,973  & 279 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Порог $\geq 10$ статей выбран осознанно: при более мягком фильтре ($\geq 5$) число test-примеров
+с релевантными coauthors растёт, но короткие истории (5–10 статей) делают mean-бейзлайн слишком
+сильным, и относительный выигрыш Transformer снижается.
+
+\subsection{Кластеризация: HDBSCAN и бейзлайны}
+\label{sec:exp-cluster}
+
+\subsubsection{Пайплайн оценки}
+
+Конвейер кластеризации:
+\begin{center}
+\small
+эмбеддинги $\to$ UMAP-10 $\to$ \{HDBSCAN | K-Means | random\}
+$\to$ c-TF-IDF $\to$ MMR $\to$ LLM-метки $\to$ coherence / distinctness / quant
+\end{center}
+
+Сравниваются два варианта HDBSCAN (fine и medium) и сетка наивных бейзлайнов
+\texttt{kmeans\_umap10\_k*} / \texttt{random\_umap10\_k*} на UMAP-10 с $K \in \{50, 100, 200, 400,
+600, 800, 1000\}$. LLM-оценка (coherence, distinctness) запускалась для \texttt{hdbscan\_fine},
+\texttt{hdbscan\_medium} и бейзлайнов K-Means при $K$, совпадающем с числом кластеров победителя
+(979) и \texttt{hdbscan\_medium} (242).
+
+Метрики в таблицах ниже \emph{независимы} — сводный взвешенный балл не используется. Когерентность
+$c$ (шкала судьи 0–3) нормируется к $[0,1]$: $\hat{c} = c/3$. Остальные метрики уже лежат в $[0,1]$:
+$d$ — доля дублирующих пар, $n$ — доля шума, top5 — доля корпуса в пяти крупнейших кластерах.
+
+\subsubsection{Количественные метрики}
+
+Источник: \code{results/summary_metrics_quant.csv}. Таблица~\ref{tab:quant-cluster} — варианты
+HDBSCAN и выбранные бейзлайны (полная сетка по $K$ — в артефакте).
+
+\begin{table}[ht]
+\caption{Количественные метрики кластеризации (AI-корпус, 509\,447 статей)}
+\label{tab:quant-cluster}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrrrrr}
+\toprule
+variant & $K$ & $e$ & size\_p50 & top5 & $n$ \\
+\midrule
+\textbf{hdbscan\_fine}   & \textbf{979} & 0.019 & 112   & 0.032 & \textbf{0.647} \\
+hdbscan\_medium          & 242 & 0.032 & 581   & 0.253 & 0.358 \\
+kmeans\_umap10\_k979     & 979 & 0.000 & 442   & 0.021 & 0.000 \\
+kmeans\_umap10\_k242     & 242 & 0.000 & 1911  & 0.077 & 0.000 \\
+random\_umap10\_k1000    & 1000 & 0.000 & 509   & 0.006 & 0.000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+На масштабе 509\,447 статей HDBSCAN даёт много мелких тем ($K = 979$) ценой высокой доли шума
+($n = 0{,}65$): значительная часть статей не попадает в плотные кластеры. K-Means и random с
+фиксированным $K$ дают полное покрытие ($n = 0$) и нулевую энтропию назначений ($e = 0$) — hard
+assignment без мягких вероятностей.
+
+\subsubsection{LLM-метрики и сравнение с бейзлайнами}
+
+Источник: \code{results/summary_metrics.csv}, \code{results/selection_report.md}.
+
+\begin{table}[ht]
+\caption{LLM-метрики кластеризации (нормированные к $[0,1]$)}
+\label{tab:llm-cluster}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrrrrrr}
+\toprule
+variant & $K$ & $\hat{c}$ & $d$ & $e$ & top5 & $n$ \\
+\midrule
+\textbf{hdbscan\_fine}   & \textbf{979} & \textbf{0.934} & 0.107 & 0.019 & 0.032 & 0.647 \\
+hdbscan\_medium          & 242 & 0.805 & 0.010 & 0.032 & 0.253 & 0.358 \\
+kmeans\_umap10\_k979     & 979 & 0.726 & 0.260 & 0.000 & 0.021 & 0.000 \\
+kmeans\_umap10\_k242     & 242 & 0.623 & 0.033 & 0.000 & 0.077 & 0.000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\caption{Прирост hdbscan\_fine относительно K-Means при $K = 979$}
+\label{tab:cluster-delta}
+\centering
+\footnotesize
+\begin{tabular}{lrrr}
+\toprule
+Метрика & hdbscan\_fine & kmeans\_k979 & $\Delta$ (лучше $\uparrow$ / $\downarrow$) \\
+\midrule
+$\hat{c}$ (когерентность) & 0.934 & 0.726 & $+0.208\,\uparrow$ \\
+$d$ (дубли, меньше лучше) & 0.107 & 0.260 & $-0.153\,\downarrow$ \\
+top5 (меньше лучше)       & 0.032 & 0.021 & $+0.011$ \\
+$n$ (шум, меньше лучше)   & 0.647 & 0.000 & $+0.647$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Обоснование выбора \texttt{hdbscan\_fine}.} Выбор лучшего метода для наших целей неочевиден:
+у каждого варианта свои сильные стороны. \texttt{hdbscan\_medium} существенно лучше по различимости
+($d = 0{,}01$) и доле шума ($n = 0{,}36$), но проигрывает по когерентности ($\hat{c} = 0{,}81$
+против $0{,}93$) и даёт крупные темы (медиана 581 статья). K-Means при $K = 979$ достигает
+$\hat{c} = 0{,}73$, но $d = 0{,}26$ — почти четверть проверенных пар тем дублируют друг друга.
+
+Для fine-слоя приоритет — \textbf{интерпретируемость и детализация карты}. \texttt{hdbscan\_fine}
+выбран по наибольшей когерентности ($c = 2{,}80$, $\hat{c} = 0{,}93$) с явной оговоркой: доля
+шума $n = 0{,}65$ высока, но это осознанный компромисс плотностной кластеризации на
+неоднородном AI-корпусе — лучше честно пометить фоновые статьи шумом, чем размывать темы ради
+полного покрытия.
+
+\subsubsection{Метакластеры}
+
+Fine-темы (\texttt{hdbscan\_fine}, $K = 979$) объединены в метакластеры по эмбеддингам
+метадокументов (multilingual-e5-base, префикс \texttt{query:}). LLM-оценка — отдельные судьи
+(\code{metric_meta_coherence.py}, \code{metric_meta_distinctness.py}): судья оценивает,
+насколько fine-темы образуют одну \emph{широкую} исследовательскую область. Вес когерентности —
+по числу статей fine-кластеров в метакластере, не по числу fine-тем.
+
+\begin{table}[ht]
+\caption{LLM-метрики метакластеризации ($K = 76$)}
+\label{tab:meta-cluster}
+\centering
+\footnotesize
+\begin{tabular}{lrrrrr}
+\toprule
+variant & $K$ & $\hat{c}$ & $d$ & $e$ & $n$ \\
+\midrule
+\textbf{meta\_hdbscan\_medium} & \textbf{76} & \textbf{0.903} & 0.000 & 0.330 & 0.114 \\
+meta\_kmeans\_umap10\_k76      & 76 & 0.806 & 0.000 & 0.000 & 0.000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Итог:} \texttt{meta\_hdbscan\_medium} — победитель по когерентности; K-Means при том же
+$K = 76$ ниже ($\hat{c} = 0{,}81$). Числа meta-coherence \textbf{не сопоставимы} напрямую с
+fine ($\hat{c} = 0{,}93$): другая постановка судьи и другая шкала интерпретации (широкая область
+против узкой fine-темы).
+
+\subsection{Author retrieval: семантика, граф и метакластеры}
+\label{sec:exp-retrieval}
+
+\subsubsection{Постановка и протокол оценки}
+
+Задача — \textbf{retrieval} потенциальных coauthors: по истории автора ($\leq 2024$) найти авторов
+из того же split, которые станут новыми coauthors после 2024. Этот observed-сигнал неполный:
+многие хорошие рекомендации не успевают стать фактическими соавторствами в test-периоде, поэтому
+observed-метрики используются как строгий нижний proxy, а LLM-оценка — как проверка смысловой
+релевантности кандидатов.
+
+\begin{itemize}
+  \item \textbf{Loss:} multi-positive coauthor InfoNCE; позитивы исключены из знаменателя.
+  \item \textbf{Early stopping:} val nDCG@50.
+  \item \textbf{Основной онлайн-бюджет:} retrieval отдаёт $K = 10$ кандидатов, затем LLM выбирает
+        3 автора для финальной рекомендации.
+  \item \textbf{Сравниваемые сигналы:} mean semantic baseline, Transformer по истории статей,
+        GraphSAGE по графу соавторства и комбинированный Transformer+GraphSAGE.
+\end{itemize}
+
+\subsubsection{Конфигурации моделей}
+
+Transformer-варианты используют $d_{\mathrm{model}} = 256$, 2 слоя, 4 головы внимания, dropout 0.2,
+batch\_size 64, $n_{\mathrm{negatives}} = 256$, $\tau = 0{,}05$, max\_history 20, AdamW с
+$\mathrm{lr}=2\cdot10^{-4}$ и $\mathrm{weight\_decay}=0{,}05$. Для \code{author_retriever}
+лучший чекпойнт выбран на epoch 7 по val nDCG@50; для \code{transformer_author_no_cluster} —
+на epoch 4.
+
+GraphSAGE-варианты используют 2 слоя, hidden\_dim 256, dropout 0.2, $n_{\mathrm{negatives}} = 256$,
+$\tau = 0{,}05$, max\_history 20, AdamW с $\mathrm{lr}=10^{-3}$ и
+$\mathrm{weight\_decay}=10^{-2}$. В графе 35\,954 авторских узла и 464\,752 направленных
+author-author ребра. В варианте с метакластерами добавлены 76 meta-узлов и 172\,376 направленных
+author-meta/meta-author рёбер. Лучшие чекпойнты по val nDCG@50: epoch 11 для
+\code{graphsage_author}, epoch 60 для \code{graphsage_author_metacluster}, epoch 19 для
+\code{graphsage_transformer_author}.
+
+\subsubsection{Observed-метрики}
+
+Источник: \code{results/retrieval/consistency/retrieval_metrics_at_k.csv} и
+\code{results/retrieval/transformer_variants_metrics.csv}. Все числа в таблице~\ref{tab:retrieval-observed}
+посчитаны на test при $K = 10$.
+
+\begin{table}[ht]
+\caption{Observed-метрики retrieval на test ($K = 10$)}
+\label{tab:retrieval-observed}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrr}
+\toprule
+Метод & Hit@10 & MRR@10 & nDCG@10 & Recall@10 \\
+\midrule
+Mean embedding & 0.0172 & 0.0059 & 0.0076 & 0.0148 \\
+Transformer (no cluster) & 0.0198 & 0.0071 & 0.0088 & 0.0173 \\
+Transformer + fine $q$ & 0.0198 & 0.0073 & 0.0089 & 0.0168 \\
+GraphSAGE & 0.0182 & 0.0074 & 0.0087 & 0.0150 \\
+GraphSAGE + meta & 0.0203 & 0.0072 & 0.0087 & 0.0169 \\
+\textbf{Transformer + GraphSAGE} & \textbf{0.0223} & \textbf{0.0086} & \textbf{0.0102} & \textbf{0.0186} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Результат важен не абсолютным размером прироста, а сравнением источников сигнала. Mean embedding
+уже силён: у всех авторов в выборке длинная история ($\geq 10$ статей), а paper embeddings хорошо
+отражают тематику. Transformer без кластеров и Transformer с fine $q$ почти совпадают по Hit@10 и
+nDCG@10; значит, кластерные признаки в semantic retriever не дают явного выигрыша. GraphSAGE без
+метакластеров также близок к Transformer: граф прошлого соавторства содержит сильный сигнал, но он
+во многом скоррелирован с семантической близостью статей. Комбинированный Transformer+GraphSAGE
+показывает лучший observed nDCG@10, но разница мала на фоне разреженности target-разметки.
+
+\subsubsection{LLM-оценка рекомендаций}
+
+LLM-оценка запускалась на 40 test-users и top-10 кандидатах. Здесь порядок внутри top-10 не является
+главной целью, потому что LLM оценивает всех 10 кандидатов и затем выбирает трёх. Поэтому в
+таблице~\ref{tab:retrieval-llm} основные метрики — наличие достаточного числа релевантных
+кандидатов и качество выбранной тройки.
+
+\begin{table}[ht]
+\caption{LLM-оценка retrieval (40 пользователей, $K = 10$)}
+\label{tab:retrieval-llm}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrrrrr}
+\toprule
+Метод & Has3 $\geq 2$ & Selected3Mean & Hit $=3$ & MRR $=3$ & Has3 $=3$ \\
+\midrule
+Transformer + fine $q$ & 0.875 & 2.425 & 0.625 & 0.491 & 0.450 \\
+GraphSAGE + meta & 0.775 & 2.367 & 0.700 & \textbf{0.541} & 0.425 \\
+\textbf{Transformer + GraphSAGE} & \textbf{0.875} & \textbf{2.492} & \textbf{0.750} & 0.521 & \textbf{0.450} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Has3 $\geq 2$ означает долю пользователей, для которых в top-10 есть хотя бы три кандидата с
+LLM-оценкой 2 или 3. Selected3Mean — средняя LLM-оценка трёх лучших кандидатов после
+переранжирования. Диагностические Hit/MRR/Has3 при score $=3$ показывают наличие очень сильных
+кандидатов, но не являются основной целью системы.
+
+GraphSAGE можно включать в работу: он показывает сопоставимое качество с Transformer и даёт
+понятную проверку гипотезы о пользе графа соавторства. При этом текущие результаты не позволяют
+утверждать значимый выигрыш от кластеризации в рекомендациях. Метакластерные узлы чуть меняют
+observed-метрики, но paired bootstrap для метакластерного GraphSAGE против базового GraphSAGE
+даёт доверительные интервалы, включающие ноль: для Hit@10
+$\Delta = 0{,}0020$, 95\,\% CI $[-0{,}0025;\,0{,}0066]$, для nDCG@10
+$\Delta = 0{,}0001$, 95\,\% CI $[-0{,}0022;\,0{,}0023]$. Поэтому в финальной интерпретации
+кластеризация остаётся главным образом инструментом карты и интерпретации тем, а не доказанным
+источником прироста retrieval.

@@ -1,0 +1,42 @@
+{
+  "kind": "meta_clustering_selection",
+  "created_at": "2026-06-15T23:06:15",
+  "allow_proxy": false,
+  "winner": "meta_hdbscan_medium",
+  "variants": [
+    {
+      "variant": "meta_hdbscan_medium",
+      "K": 76,
+      "coherence_proxy": false,
+      "distinctness_proxy": false,
+      "coherence_weighted": 2.7084256387535075,
+      "coherence_unweighted": 2.75,
+      "dup_pair_rate": 0.0,
+      "n_pairs_checked": 131,
+      "mean_entropy_norm": 0.3297143038616122,
+      "size_p25": 7.75,
+      "size_p50": 10.0,
+      "size_p75": 14.0,
+      "top5_concentration": 0.1453287197231834,
+      "noise_ratio": 0.11440245148110317,
+      "metrics_are_real": true
+    },
+    {
+      "variant": "meta_kmeans_umap10_k76",
+      "K": 76,
+      "coherence_proxy": false,
+      "distinctness_proxy": false,
+      "coherence_weighted": 2.4170061411065107,
+      "coherence_unweighted": 2.4210526315789473,
+      "dup_pair_rate": 0.0,
+      "n_pairs_checked": 24,
+      "mean_entropy_norm": 0.0,
+      "size_p25": 9.0,
+      "size_p50": 12.5,
+      "size_p75": 15.25,
+      "top5_concentration": 0.13074565883554648,
+      "noise_ratio": 0.0,
+      "metrics_are_real": true
+    }
+  ]
+}

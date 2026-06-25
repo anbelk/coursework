@@ -1,0 +1,32 @@
+{
+  "split": "test",
+  "n_users": 40,
+  "top_k": 10,
+  "methods": {
+    "author_retriever": {
+      "llm_ndcg@10": 0.8435846668654003,
+      "llm_precision@10_ge2": 0.6725,
+      "mean_llm_score@10": 1.7325
+    },
+    "graphsage_transformer_author": {
+      "llm_ndcg@10": 0.8489548580692932,
+      "llm_precision@10_ge2": 0.6799999999999999,
+      "mean_llm_score@10": 1.7450000000000003
+    },
+    "graphsage_author_metacluster": {
+      "llm_ndcg@10": 0.8663022261332012,
+      "llm_precision@10_ge2": 0.65,
+      "mean_llm_score@10": 1.6824999999999999
+    },
+    "prop_lightgcn_l3_d1p0": {
+      "llm_ndcg@10": 0.8123976672506366,
+      "llm_precision@10_ge2": 0.5900000000000001,
+      "mean_llm_score@10": 1.525
+    },
+    "prop_appnp_s2_a0p1": {
+      "llm_ndcg@10": 0.8253072519674234,
+      "llm_precision@10_ge2": 0.5575,
+      "mean_llm_score@10": 1.4425000000000001
+    }
+  }
+}

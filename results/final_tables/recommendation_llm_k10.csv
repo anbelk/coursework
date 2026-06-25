@@ -1,0 +1,11 @@
+method_class,method,artifact,status,K,n_users,llm_has_3_ge2,llm_selected3_mean_score,llm_hit_ge3,llm_mrr_ge3,llm_has_3_ge3,llm_relevant_rate_ge2
+Baseline,mean_author_embedding,mean_author_embedding,llm_not_run,10,,,,,,,
+Transformer,transformer_author_no_cluster,transformer_author_no_cluster,not_run,10,,,,,,,
+Transformer,transformer_author_fine,author_retriever,computed_legacy_alias,10,40.0,0.875,2.425,0.625,0.4910714285714285,0.45,0.6725
+Transformer,transformer_author_metacluster,transformer_author_metacluster,not_run,10,,,,,,,
+Transformer,transformer_author_fine_metacluster,transformer_author_fine_metacluster,not_run,10,,,,,,,
+GraphSAGE,graphsage_author_no_cluster,graphsage_author,llm_not_run,10,,,,,,,
+GraphSAGE,graphsage_author_fine,,not_run,10,,,,,,,
+GraphSAGE,graphsage_author_metacluster,graphsage_author_metacluster,computed_legacy_alias,10,40.0,0.775,2.3666666666666667,0.7,0.5412797619047619,0.425,0.65
+GraphSAGE,graphsage_author_fine_metacluster,,not_run,10,,,,,,,
+Semantic + Graph,graphsage_transformer_fine,graphsage_transformer_author,computed_legacy_alias,10,40.0,0.875,2.4916666666666663,0.75,0.5213789682539682,0.45,0.68

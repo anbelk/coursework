@@ -1,0 +1,46 @@
+\thispagestyle{empty}
+\section*{Аннотация}
+
+В работе разработана и реализована система <<AI Coauthor>> — комплекс семантического
+анализа научного пространства, тематической кластеризации публикаций и рекомендации
+потенциальных научных соавторов с объяснениями на основе больших языковых моделей.
+Цель работы — построить инструмент, который по тексту научных статей выявляет тематическую
+структуру предметной области и обоснованно подсказывает исследователю семантически
+совместимых коллег. Эмпирическую базу составляет корпус из 509\,447 публикаций OpenAlex
+по подполю Artificial Intelligence и 35\,954 квалифицированных авторов. Статьи представлены
+многоязычными эмбеддингами модели multilingual-e5-base (768 измерений); тематическая
+структура из 979 тем получена пайплайном в стиле BERTopic (UMAP $\to$ HDBSCAN $\to$
+c-TF-IDF $\to$ MMR $\to$ разметка языковой моделью), а 979 тем дополнительно объединены
+в 76 метакластеров — семантический слой над темами. HDBSCAN сравнивался с наивными
+бейзлайнами K-Means и случайным разбиением на UMAP-10; выбор обоснован по совокупности
+независимых метрик качества тем. Рекомендация соавторов реализована в два этапа:
+mean-, Transformer- и GraphSAGE-представления автора извлекают близких кандидатов (retrieval),
+после чего пятиступенчатый пайплайн на основе языковой модели переранжирует их и формирует
+объяснения с конкретными попарными связями статей. Качество финальной выдачи оценено
+LLM-судьёй: LLM Has3@10 (score $\geq 2$) = 0,875, LLM Selected3Mean@10 = 2,49 из 3.
+Результат интегрирован в
+веб-приложение с интерактивной картой научного пространства.
+
+\newpage
+\thispagestyle{empty}
+\section*{Abstract}
+
+\begin{english}
+This work presents AI Coauthor, a system for the semantic analysis of the scientific landscape:
+it performs topic clustering of publications and recommends potential research collaborators with
+explanations produced by large language models. The goal is a tool that recovers the topical
+structure of a research field directly from paper texts and suggests semantically compatible peers
+in a justified, interpretable way. The empirical base is a corpus of 509{,}447 OpenAlex publications
+in the Artificial Intelligence subfield and 35{,}954 qualified authors. Papers are represented by
+multilingual embeddings from the multilingual-e5-base model (768 dimensions); a topical structure
+of 979 topics is obtained with a BERTopic-style pipeline (UMAP $\to$ HDBSCAN $\to$ c-TF-IDF
+$\to$ MMR $\to$ LLM labeling), and the 979 topics are further grouped into 76 meta-clusters, a
+semantic layer over the topics. HDBSCAN is compared against naive K-Means and random baselines on
+UMAP-10; the choice is justified through a set of independent topic-quality metrics. Collaborator
+recommendation is built in two stages: mean, Transformer, and GraphSAGE author representations retrieve nearby
+candidates, after which a five-stage LLM pipeline re-ranks them and generates explanations grounded
+in concrete pairwise paper links. The final recommendations are evaluated with an LLM judge:
+LLM Has3@10 (score $\geq 2$) = 0.875, and LLM Selected3Mean@10 reaches 2.49 out of 3. The
+result is integrated into a web application with an
+interactive map of the scientific space.
+\end{english}

@@ -1,0 +1,7 @@
+{
+  "method": "prop_lightgcn_l3_d1p0",
+  "val_ndcg@50": 0.02365982305264989,
+  "family": "lightgcn",
+  "layers": 3,
+  "decay": 1.0
+}

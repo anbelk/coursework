@@ -1,0 +1,113 @@
+% Курсовая работа. Компиляция: XeLaTeX + Biber (latexmk -xelatex main.tex).
+\documentclass[14pt,a4paper,oneside]{extarticle}
+
+% --- Кодировка, язык, шрифт (XeLaTeX) ---
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage{russian}
+\setotherlanguage{english}
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{Times New Roman}
+\setmonofont{Courier New}[Scale=MatchLowercase]
+\newfontfamily\cyrillicfont{Times New Roman}
+\newfontfamily\cyrillicfonttt{Courier New}[Scale=MatchLowercase]
+
+% --- Геометрия страницы (левое поле >= 2 см; берём ГОСТ-поля) ---
+\usepackage[a4paper,left=30mm,right=15mm,top=20mm,bottom=20mm]{geometry}
+
+% --- Межстрочный интервал 1,5 и красная строка 1 см ---
+\usepackage{setspace}
+\onehalfspacing
+\setlength{\parindent}{1cm}
+
+% --- Аккуратная правая граница: микротипографика + аварийный растяг ---
+\usepackage{microtype}
+\setlength{\emergencystretch}{3em}
+
+% --- Графика, таблицы, формулы ---
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,fit,backgrounds}
+\usepackage{placeins}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{siunitx}
+
+% --- Подписи: рисунки снизу по центру (Рис. 2.3.), таблицы сверху справа (Таблица 2.3.) ---
+\usepackage{caption}
+\captionsetup{labelsep=period}
+\captionsetup[figure]{name=Рис.,justification=centering,position=bottom}
+\captionsetup[table]{name=Таблица,justification=raggedleft,singlelinecheck=false,position=top}
+
+% --- Нумерация объектов внутри глав (через точку: 2.3) ---
+\numberwithin{figure}{section}
+\numberwithin{table}{section}
+\numberwithin{equation}{section}
+
+% --- Заголовки разделов ---
+\usepackage{titlesec}
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalfont\normalsize\itshape}{\thesubsubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{14pt}{8pt}
+\titlespacing*{\subsection}{0pt}{12pt}{6pt}
+
+% --- Содержание ---
+\usepackage{tocloft}
+\renewcommand{\cfttoctitlefont}{\hfill\large\bfseries}
+\renewcommand{\cftaftertoctitle}{\hfill}
+
+% --- Гиперссылки и перекрёстные ссылки ---
+\usepackage[hidelinks,unicode]{hyperref}
+\usepackage{xurl}
+
+% --- Переносимый моноширинный код (рвётся по /, _, .) для длинных путей ---
+\DeclareUrlCommand\code{\urlstyle{tt}}
+
+% --- Библиография: ГОСТ Р 7.0.5-2008, числовой стиль ---
+\usepackage[backend=biber,style=gost-numeric,sorting=none,language=auto,autolang=other]{biblatex}
+\addbibresource{references.bib}
+
+% --- Нумерация страниц: снизу по центру, на титуле не печатается ---
+\pagestyle{plain}
+
+\begin{document}
+
+% Титульный лист (не нумеруется)
+\input{sections/title}
+
+% Аннотации RU/EN (не нумеруются)
+\input{sections/annotation}
+
+% Содержание (титул и аннотации не нумеруются; сквозной номер начинается здесь)
+\clearpage
+\setcounter{page}{4}
+\tableofcontents
+\newpage
+
+% Введение
+\input{sections/introduction}
+
+% Главы
+\input{sections/chapter1}
+\input{sections/chapter2}
+\input{sections/chapter3}
+
+% Заключение
+% \input{sections/conclusion}
+
+% Библиографический список
+\newpage
+\printbibliography[title={Библиографический список}]
+\addcontentsline{toc}{section}{Библиографический список}
+
+% Приложения
+\newpage
+\input{sections/appendix}
+
+\end{document}

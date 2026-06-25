@@ -1,0 +1,21 @@
+{
+  "methods": [
+    "mean_author_embedding",
+    "author_retriever",
+    "graphsage_author",
+    "graphsage_author_metacluster",
+    "graphsage_transformer_author",
+    "graphsage_transformer_author_metacluster"
+  ],
+  "split": "test",
+  "ks": [
+    5,
+    10,
+    20
+  ],
+  "primary_k": 10,
+  "baseline": "author_retriever",
+  "max_history": 20,
+  "bootstrap": 2000,
+  "seed": 42
+}

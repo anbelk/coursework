@@ -1,0 +1,5 @@
+host: 127.0.0.1
+port: 8000
+reload: false
+paper_panel_max_chars: 900
+search_min_chars: 2

@@ -1,0 +1,9 @@
+{
+  "base_variant_for_metacluster": "bertopic_style_fine",
+  "outputs": [
+    "cluster_granularity_summary.csv",
+    "cluster_granularity_distribution.csv",
+    "cluster_granularity_distribution.png",
+    "cluster_granularity_scatter.png"
+  ]
+}

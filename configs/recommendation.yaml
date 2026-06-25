@@ -1,0 +1,12 @@
+retrieval:
+  top_n: 10
+  top_k: 3
+  workers: 8
+llm:
+  model: gpt-4.1-mini
+  relevance_threshold: 2
+  allowed_recommendation_types:
+    - direct topical match
+    - methodological match
+    - complementary expertise
+    - weak/general match

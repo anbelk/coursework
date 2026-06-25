@@ -1,0 +1,2 @@
+method_class,method,granularity,variant,base_variant,status,K,llm_assigned_fit@10,llm_intruder_accuracy@10,assigned_fit_n_clusters,dup_pair_rate,embedding_coherence_lift,embedding_coherence_lift_weighted,assignment_confidence_mean,assignment_entropy_norm,noise_ratio,size_balance_entropy,size_p50,top5_concentration
+Coarse / Metacluster,bertopic_style_metacluster,metacluster,bertopic_style_metacluster,bertopic_style_fine,computed,76,2.236666666666667,0.7666666666666667,30,0.0,,,,0.3297143038616122,0.11440245148110317,,10.0,0.1453287197231834

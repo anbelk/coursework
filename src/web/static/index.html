@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Coauthor</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <script src="https://unpkg.com/deck.gl@9.0.37/dist.min.js"></script>
+  </head>
+  <body>
+    <main class="app">
+      <section class="map-panel">
+        <div class="brand-card">
+          <h1>AI Coauthor</h1>
+          <p>Zoom out: macro topics · medium: fine topics · zoom in: papers</p>
+        </div>
+        <div id="deck"></div>
+        <aside id="paperPanel" class="paper-panel hidden">
+          <button id="closePaperPanel" class="close small">×</button>
+          <div id="paperPanelContent"></div>
+        </aside>
+        <div id="clusterTooltip" class="cluster-tooltip hidden"></div>
+      </section>
+
+      <aside class="side-panel">
+        <h2>Find an author</h2>
+        <p class="muted">Start typing a qualified author name. Selecting an author runs embedding-based retrieval with LLM reranking.</p>
+        <input id="authorInput" type="search" placeholder="Author name..." autocomplete="off" />
+        <div id="suggestions" class="suggestions"></div>
+      </aside>
+    </main>
+
+    <div id="modal" class="modal hidden">
+      <div class="modal-card">
+        <button id="closeModal" class="close">×</button>
+        <div id="modalContent"></div>
+      </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

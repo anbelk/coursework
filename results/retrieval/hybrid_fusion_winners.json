@@ -1,0 +1,24 @@
+{
+  "winners": [
+    {
+      "transformer": "author_retriever",
+      "graph_method": "graphsage_author",
+      "alpha_transformer": 0.1,
+      "alpha_graph": 0.9,
+      "selected_by": "val_ndcg@50",
+      "val_ndcg@50": 0.02077690667423637,
+      "max_history": 20,
+      "method": "fusion_author_retriever_graphsage_author_a0p10"
+    },
+    {
+      "transformer": "author_retriever",
+      "graph_method": "graphsage_author_metacluster",
+      "alpha_transformer": 0.0,
+      "alpha_graph": 1.0,
+      "selected_by": "val_ndcg@50",
+      "val_ndcg@50": 0.021648429303554047,
+      "max_history": 20,
+      "method": "fusion_author_retriever_graphsage_author_metacluster_a0p00"
+    }
+  ]
+}
